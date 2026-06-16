@@ -1,13 +1,10 @@
 package com.demo.configuration;
 
-import io.micronaut.context.annotation.Property;
 import jakarta.inject.Singleton;
 import lombok.Getter;
 import lombok.ToString;
-import lombok.extern.log4j.Log4j2;
 
 @Singleton
-@Log4j2
 @Getter
 @ToString
 public class WebsocketServerConfiguration{
