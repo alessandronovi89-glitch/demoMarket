@@ -4,15 +4,13 @@ import com.demo.models.Position;
 import com.demo.models.Quote;
 import io.micronaut.scheduling.annotation.Scheduled;
 import io.reactivex.rxjava3.core.BackpressureStrategy;
-import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Singleton
@@ -26,17 +24,6 @@ public class GeneratorData {
 
     private BehaviorSubject<Quote> quoteEmitter = BehaviorSubject.create();
     private BehaviorSubject<Position> positionEmitter = BehaviorSubject.create();
-    public GeneratorData() {
-        Disposable quoteDisposable = quoteEmitter.subscribe((t)->log.info("Quote: {}", t));
-        Disposable positionDisposable = positionEmitter.subscribe((p)->log.info("Position: {}", p));
-
-        CompletableFuture.delayedExecutor(10, TimeUnit.SECONDS)
-                .execute(() -> {
-                    log.info("Disposing subscriptions...");
-                    quoteDisposable.dispose();
-                    positionDisposable.dispose();
-                });
-    }
 
     @Scheduled(fixedRate = "200ms")
     void generateMarketData() {
@@ -49,6 +36,14 @@ public class GeneratorData {
     @Scheduled(fixedRate = "500ms")
     void reader() {
 
+    }
+
+    public Flowable<Quote> getQuoteEmitter() {
+        return quoteEmitter.toFlowable(BackpressureStrategy.BUFFER);
+    }
+
+    public Flowable<Position> getPositionEmitter() {
+        return positionEmitter.toFlowable(BackpressureStrategy.BUFFER);
     }
 
     private Quote generateQuote() {

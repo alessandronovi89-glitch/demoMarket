@@ -24,6 +24,7 @@ dependencies {
     implementation("io.micronaut.rxjava3:micronaut-rxjava3")
     compileOnly("org.projectlombok:lombok:1.18.46")
     annotationProcessor("org.projectlombok:lombok:1.18.46")
+    implementation("io.micronaut:micronaut-websocket")
 }
 
 
