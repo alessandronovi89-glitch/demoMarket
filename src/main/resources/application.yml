@@ -1,0 +1,16 @@
+micronaut:
+    server:
+        idle-timeout: 60m
+        read-idle-timeout: 60m
+        write-idle-timeout: 60m
+
+    application:
+        name: ia360-demo
+
+logger:
+    levels:
+        io.micronaut: TRACE
+        com.demo: TRACE
+
+demo:
+    test-value: "IL MIO VALORE TEST"

@@ -25,6 +25,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.46")
     annotationProcessor("org.projectlombok:lombok:1.18.46")
     implementation("io.micronaut:micronaut-websocket")
+    runtimeOnly("org.yaml:snakeyaml")  // ← AGGIUNGI QUESTA RIGA
 }
 
 

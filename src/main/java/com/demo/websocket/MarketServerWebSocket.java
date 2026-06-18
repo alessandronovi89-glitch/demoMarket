@@ -1,22 +1,20 @@
 package com.demo.websocket;
 
+import com.demo.configuration.DemoConfig;
+import com.demo.models.Position;
+import com.demo.models.Quote;
 import com.demo.service.GeneratorData;
-import io.micronaut.websocket.WebSocketBroadcaster;
 import io.micronaut.websocket.WebSocketSession;
 import io.micronaut.websocket.annotation.OnClose;
 import io.micronaut.websocket.annotation.OnMessage;
 import io.micronaut.websocket.annotation.OnOpen;
 import io.micronaut.websocket.annotation.ServerWebSocket;
-import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 //per il websocket server e cliente vedere le guide e il progetto e IA ecc
@@ -31,56 +29,108 @@ instrument → metadata relativamente statico
 
 
 @Slf4j
-@ServerWebSocket("/ws/market/{topic}")
+@ServerWebSocket("/ws/market")
 @RequiredArgsConstructor
 public class MarketServerWebSocket {
-    private final WebSocketBroadcaster broadcaster;
     private final GeneratorData generatorData;
-    private Map<String, Disposable> disposableMap = new HashMap<>();
-    private Map<String, List<WebSocketSession>> webSocketSessionMap = new HashMap();
+    private final DemoConfig demoConfig;
+    private Disposable positionDisposable;
+    private Disposable quoteDisposable;
+    private ConcurrentHashMap<WebSocketSession, Set<String>> webSocketFilters = new ConcurrentHashMap<>();
+    private final Object lock = new Object();
 
-    //concorrenza? ConcurrentHashMap
+    //perchè i websocket con postman durano solo 5 minuti? -> idle timeout da parte del clinet di default
+    //ma l'application yml lo sta leggendo?, no perchè non sembra.. bo
     @OnOpen
-    public void onOpen(WebSocketSession session, String topic) {
-        log.info("WebSocket opened for topic: " + topic);
+    public void onOpen(WebSocketSession session) {
+        log.info("WebSocket opened");
         session.sendSync("Welcome, " + session.getId()); //send a welcome message to the client
-        webSocketSessionMap.computeIfAbsent(topic, k -> new ArrayList<>())
-                .add(session);
-        disposableMap.put(session.getId(), sendByTopic(topic));
-
-    }
-
-    private Disposable sendByTopic(String topic) {
-        Predicate<WebSocketSession> filterSession = (session) ->
-                webSocketSessionMap.get(topic).contains(session);
-        //broadcast non va piu bene..
-        return switch (topic) {
-            case "quote" -> generatorData.getQuoteEmitter()
-                    .subscribe(q -> broadcaster.broadcastAsync("quote: " + q, filterSession));
-            case "position" -> generatorData.getPositionEmitter()
-                    .subscribe(p -> broadcaster.broadcastAsync("position: " + p, filterSession));
-            default -> Flowable.merge(generatorData.getPositionEmitter(),
-                            generatorData.getQuoteEmitter())
-                    .onBackpressureBuffer()
-                    .subscribe(el -> broadcaster.broadcastAsync("element: " + el, filterSession));
-        };
-
+        synchronized (lock) {
+            if (webSocketFilters.isEmpty()) {
+                quoteDisposable = generatorData.getQuoteEmitter().subscribe(this::dispatch);
+                positionDisposable = generatorData.getPositionEmitter().subscribe(this::dispatch);
+            }
+            webSocketFilters.put(session, ConcurrentHashMap.newKeySet());
+        }
     }
 
     @OnMessage
     public void onMessage(WebSocketSession session, String message) {
         log.info("Received message: " + message);
+        if(message.equals("ping")){
+            return; //message from client for keeping alive the connection
+        }
+        try {
+            if (message.startsWith("add")) { //se vuoi concatenare interessi
+                webSocketFilters.get(session).add(message.substring(4).trim()); //è una bozza!
+            } else {
+                webSocketFilters.replace(session, ConcurrentHashMap.newKeySet());
+                webSocketFilters.get(session).add(message);
+            }
+        }catch (Exception e){
+            log.error("error in subscription with message: {}", message);
+        }
+    }
+
+    private void dispatch(Quote quote) {
+        webSocketFilters.keySet().forEach(session-> {
+            sendGenericQuote(quote, session);
+            sendSpecificQuote(quote, session);
+        });
+    }
+
+    private void sendGenericQuote(Quote quote, WebSocketSession session) {
+        try {
+            if (webSocketFilters.get(session).contains("quote")) { //ha solo quote -> inviamo tutte le quote
+                session.sendAsync(quote.toString());
+            }
+        } catch (Exception e) {
+            log.error("Error in sending generic quote: {}", quote);
+        }
+    }
+
+    private void sendSpecificQuote(Quote quote, WebSocketSession session) {
+        try {
+            webSocketFilters.get(session).stream().filter(s->s.startsWith("quote ")).forEach(subscription -> {
+               String symbol = subscription.split(" ")[1];
+               if(symbol.equals(quote.getSymbol())) {
+                   session.sendAsync(quote.toString());
+               }
+            });
+        } catch (Exception e) {
+            log.error("Error in sending a specific quote: {}", quote);
+        }
+    }
+
+
+
+    private void dispatch(Position position) {
+        webSocketFilters.keySet().forEach(session->{
+            try {
+                if(webSocketFilters.get(session).contains("position")){
+                    session.sendAsync(position.toString());
+                }
+            } catch (Exception e) {
+                log.error("Error in sending position: ", position.toString());
+            }
+        });
     }
 
     @OnClose
-    public void onClose(WebSocketSession session, String topic) {
-        log.info("WebSocket closed for topic: " + topic);
-        if(disposableMap.get(session.getId())!=null){
-            disposableMap.get(session.getId()).dispose();
-            disposableMap.remove(session.getId()); //clean the map
-            if(webSocketSessionMap.containsKey(topic)){
-                webSocketSessionMap.get(topic).remove(session);
+    public void onClose(WebSocketSession session) {
+        log.info("WebSocket closed");
+        synchronized (lock) {
+            webSocketFilters.remove(session);
+            if (webSocketFilters.isEmpty()) { //problema concorrenza
+                closeDisposable(positionDisposable);
+                closeDisposable(quoteDisposable);
             }
+        }
+    }
+
+    private void closeDisposable(Disposable disposable) {
+        if (disposable != null) {
+            disposable.dispose();
         }
     }
 
