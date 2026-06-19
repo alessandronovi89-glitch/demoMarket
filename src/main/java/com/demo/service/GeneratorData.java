@@ -9,6 +9,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
 
@@ -53,8 +54,8 @@ public class GeneratorData {
         double bid = round(mid - spread);
         double ask = round(mid + spread);
         double last = round(bid + random.nextDouble() * spread * 2);
-        double volume = round(random.nextDouble() * 50_000);
-        return new Quote("QUOTE", symbol, bid, ask, last, volume, System.currentTimeMillis());
+        long volume = random.nextLong();
+        return new Quote("QUOTE", symbol, new BigDecimal(bid), new BigDecimal(ask), new BigDecimal(last), volume, System.currentTimeMillis());
 
 
     }
@@ -67,7 +68,7 @@ public class GeneratorData {
         double avgEntry = round(50 + random.nextDouble() * 30_000);
         double markPrice = round(avgEntry * (1 + (random.nextDouble() - 0.5) * 0.1));
         double unrealizedPnL = round((markPrice - avgEntry) * size * (side.equals("SHORT") ? -1 : 1));
-        return new Position(accountId, symbol, side, size, avgEntry, markPrice, unrealizedPnL);
+        return new Position(accountId, symbol, side, size, new BigDecimal(avgEntry), new BigDecimal(markPrice), new BigDecimal(unrealizedPnL));
     }
 
     private double round(double value) {

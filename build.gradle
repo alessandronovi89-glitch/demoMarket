@@ -24,8 +24,11 @@ dependencies {
     implementation("io.micronaut.rxjava3:micronaut-rxjava3")
     compileOnly("org.projectlombok:lombok:1.18.46")
     annotationProcessor("org.projectlombok:lombok:1.18.46")
+    testCompileOnly("org.projectlombok:lombok:1.18.46") //*
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.46") //*
     implementation("io.micronaut:micronaut-websocket")
-    runtimeOnly("org.yaml:snakeyaml")  // ← AGGIUNGI QUESTA RIGA
+    runtimeOnly("org.yaml:snakeyaml")
+    implementation("com.google.protobuf:protobuf-java:4.35.1")
 }
 
 

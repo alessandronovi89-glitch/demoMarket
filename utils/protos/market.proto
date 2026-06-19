@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package market;
+
+option java_multiple_files = true;
+option java_package = "com.demo.proto.market";
+//option java_outer_classname = "Market";
+
+message PositionMessage {
+  string accountId = 1;
+  string symbol = 2;
+  string side = 3;
+  int32 size = 4;
+  string avgEntryPrice = 5;
+  string markPrice = 6;
+  string unrealizedPnL = 7;
+}
+
+message QuoteMessage {
+  string type = 1;
+  string symbol = 2;
+  string bid = 3;
+  string ask = 4;
+  string last = 5;
+  int64 volume24h = 6;
+  int64 timestamp = 7;
+}
+
+message MarketMessage {
+  oneof MessageType {
+    PositionMessage position = 1;
+    QuoteMessage quote = 2;
+  }
+}
