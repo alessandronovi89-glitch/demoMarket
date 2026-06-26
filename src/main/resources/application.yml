@@ -3,14 +3,33 @@ micronaut:
         idle-timeout: 60m
         read-idle-timeout: 60m
         write-idle-timeout: 60m
+        port: 8081
+    http:
+        client:
+            read-timeout: 1m
 
     application:
         name: ia360-demo
+    security:
+        enabled: ${ENABLE_AUTH:true}
+    oauth2:
+        clients:
+            keycloak:
+                grant-type: authorization_code
+                client-id: ${KEYCLOAK_CLIENT_ID:demoClientId}
+                client-secret: ${KEYCLOAK_CLIENT_SECRET:JlqrdWhPhhIj738sr2OwPDJJiN93pV7U}
+                issuer-url: http://${keycloak.host}:${keycloak.port}/realms/${keycloak.realm}
+                token:
+                    url: http://localhost:8080/realms/ai360-demo/protocol/openid-connect/token
 
 logger:
     levels:
         io.micronaut: TRACE
         com.demo: TRACE
 
-demo:
-    test-value: "IL MIO VALORE TEST"
+keycloak:
+    host: ${KEYCLOAK_HOST:localhost}
+    port: ${KEYCLOAK_PORT:8080}
+    realm: ${KEYCLOAK_REALM:ai360-demo}
+    redirect-uri: http://localhost:8081/callback #da sistemare con variabile...
+

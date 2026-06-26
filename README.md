@@ -5,5 +5,6 @@ TODO:
 - Protobuffer
 - vedere keycloack e integrarlo con micronaut 
   (autenticazione mfa che ci siamo detti, ruoli e permessi eccetera)
+- websocket client
 - capire come funziona un po' il mercato
-- Controller e tests
+- tests

@@ -1,6 +1,5 @@
 package com.demo.websocket;
 
-import com.demo.configuration.DemoConfig;
 import com.demo.models.Position;
 import com.demo.models.Quote;
 import com.demo.proto.market.MarketMessage;
@@ -32,7 +31,6 @@ instrument → metadata relativamente statico
 @RequiredArgsConstructor
 public class MarketServerWebSocket {
     private final GeneratorData generatorData;
-    private final DemoConfig demoConfig;
     private Disposable positionDisposable;
     private Disposable quoteDisposable;
     private ConcurrentHashMap<WebSocketSession, Set<String>> webSocketFilters = new ConcurrentHashMap<>();

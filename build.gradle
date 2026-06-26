@@ -29,6 +29,10 @@ dependencies {
     implementation("io.micronaut:micronaut-websocket")
     runtimeOnly("org.yaml:snakeyaml")
     implementation("com.google.protobuf:protobuf-java:4.35.1")
+    annotationProcessor("io.micronaut.security:micronaut-security-processor")
+    implementation("io.micronaut.security:micronaut-security")
+    implementation("io.micronaut.security:micronaut-security-jwt")
+    implementation("io.micronaut:micronaut-http-client")
 }
 
 
