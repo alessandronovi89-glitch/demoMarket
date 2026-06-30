@@ -12,15 +12,25 @@ micronaut:
         name: ia360-demo
     security:
         enabled: ${ENABLE_AUTH:true}
-    oauth2:
-        clients:
-            keycloak:
-                grant-type: authorization_code
-                client-id: ${KEYCLOAK_CLIENT_ID:demoClientId}
-                client-secret: ${KEYCLOAK_CLIENT_SECRET:JlqrdWhPhhIj738sr2OwPDJJiN93pV7U}
-                issuer-url: http://${keycloak.host}:${keycloak.port}/realms/${keycloak.realm}
-                token:
-                    url: http://localhost:8080/realms/ai360-demo/protocol/openid-connect/token
+        authentication: bearer
+        token:
+            jwt:
+                signatures:
+                    jwks:
+                        keycloak:
+                            url: http://localhost:8080/realms/ai360-demo/protocol/openid-connect/certs
+        oauth2:
+            clients:
+                keycloak:
+                    grant-type: authorization_code
+                    client-id: ${KEYCLOAK_CLIENT_ID:demoClientId}
+                    client-secret: ${KEYCLOAK_CLIENT_SECRET:JlqrdWhPhhIj738sr2OwPDJJiN93pV7U}
+                    token:
+                        url: http://${keycloak.host}:${keycloak.port}/realms/${keycloak.realm}/protocol/openid-connect/token
+                    openid:
+                        issuer: http://${keycloak.host}:${keycloak.port}/realms/${keycloak.realm}
+                        jwks-uri: http://${keycloak.host}:${keycloak.port}/realms/${keycloak.realm}/protocol/openid-connect/certs
+
 
 logger:
     levels:

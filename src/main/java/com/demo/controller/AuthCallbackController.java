@@ -2,9 +2,7 @@ package com.demo.controller;
 
 import com.demo.dto.AuthTokens;
 import com.demo.service.AuthService;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import lombok.AllArgsConstructor;
@@ -18,6 +16,7 @@ import java.util.concurrent.CompletionStage;
 public class AuthCallbackController {
 
     private final AuthService authService;
+    private static final String COOKIE_REFRESH_TOKEN = "refreshToken";
 
 
     @Secured(SecurityRule.IS_ANONYMOUS) //da vedere..
@@ -25,5 +24,13 @@ public class AuthCallbackController {
     public CompletionStage<AuthTokens> callback(@QueryValue String code) {
         log.info("Received auth code: {}", code);
         return authService.exchangeCodeForToken(code);
+        //il refreshtoken andrebbe nel cookie
+    }
+
+    @Secured(SecurityRule.IS_ANONYMOUS) //da vedere..
+    @Post("/refreshToken")
+    public CompletionStage<AuthTokens> refreshToken(@CookieValue(COOKIE_REFRESH_TOKEN) String refreshToken) {
+        return authService.refreshToken(refreshToken);
+        // mettere il refresh token nel cookie
     }
 }
