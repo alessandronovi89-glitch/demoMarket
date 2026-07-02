@@ -42,4 +42,9 @@ keycloak:
     port: ${KEYCLOAK_PORT:8080}
     realm: ${KEYCLOAK_REALM:ai360-demo}
     redirect-uri: http://localhost:8081/callback #da sistemare con variabile...
+    endpoints:
+        base-url: http://${keycloak.host}:${keycloak.port}
+        admin-base-url: http://${keycloak.host}:${keycloak.port}/admin/realms/${keycloak.realm}
+        users: ${keycloak.endpoints.admin-base-url}/users
+        roles: ${keycloak.endpoints.admin-base-url}/roles
 

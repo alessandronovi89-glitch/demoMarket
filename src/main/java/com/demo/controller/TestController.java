@@ -6,6 +6,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import jakarta.annotation.security.RolesAllowed;
 
 import java.time.Instant;
 
@@ -25,5 +26,22 @@ public class TestController {
     public HttpResponse<String> privateEndpoint(Authentication authentication) {
         String subject = authentication.getName();
         return HttpResponse.ok("{\"message\": \"Private endpoint OK\", \"user\": \"" + subject + "\", \"ts\": \"" + Instant.now() + "\"}");
+    }
+
+
+    /** endpoint protetto, richiede ruolo admin. */
+    @Get("/admin")
+    @RolesAllowed("ADMIN")
+    public HttpResponse<String> endpointAdmin(Authentication authentication) {
+        String subject = authentication.getName();
+        return HttpResponse.ok("{\"message\": \"Admin endpoint OK\", \"user\": \"" + subject + "\", \"ts\": \"" + Instant.now() + "\"}");
+    }
+
+    /** Endpoint protetto — richiede ruolo user */
+    @Get("/user")
+    @RolesAllowed("USER")
+    public HttpResponse<String> endpointUser(Authentication authentication) {
+        String subject = authentication.getName();
+        return HttpResponse.ok("{\"message\": \"user endpoint OK\", \"user\": \"" + subject + "\", \"ts\": \"" + Instant.now() + "\"}");
     }
 }
