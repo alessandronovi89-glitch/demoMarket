@@ -1,5 +1,6 @@
 package com.demo.controller;
 
+import com.demo.annotation.HasPermission;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -7,9 +8,13 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import jakarta.annotation.security.RolesAllowed;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Instant;
 
+import static com.demo.models.Permission.READ_USER;
+
+@Slf4j
 @Controller("/api/test")
 public class TestController {
 
@@ -43,5 +48,14 @@ public class TestController {
     public HttpResponse<String> endpointUser(Authentication authentication) {
         String subject = authentication.getName();
         return HttpResponse.ok("{\"message\": \"user endpoint OK\", \"user\": \"" + subject + "\", \"ts\": \"" + Instant.now() + "\"}");
+    }
+
+    /** Controlli sui permessi */
+    @Get("/permission")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    @HasPermission(READ_USER) //controlli sui permessi
+    public HttpResponse<String> checkPermissions(Authentication authentication) {
+        String subject = authentication.getName();
+        return HttpResponse.ok("{\"message\": \"permission read_user is OK\", \"user\": \"" + subject + "\", \"ts\": \"" + Instant.now() + "\"}");
     }
 }
