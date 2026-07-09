@@ -1,17 +1,11 @@
 package com.demo.service;
 
 import com.demo.configuration.SecurityConfiguration;
-import com.demo.dto.AuthTokens;
-import io.micronaut.http.HttpRequest;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.CompletionStage;
 
 @Slf4j
 @Singleton
@@ -19,10 +13,11 @@ import java.util.concurrent.CompletionStage;
 public class AuthService {
 
     private final SecurityConfiguration securityConfig;
+    //private final DefaultOauthController defaultOauthController;
 
     @Client()
     private final HttpClient httpClient;
-
+/*
     public CompletionStage<AuthTokens> exchangeCodeForToken(String code) {
         String body = "grant_type=" + securityConfig.getGrantType()
                 + "&code=" + code
@@ -62,5 +57,16 @@ public class AuthService {
                     log.error("Error refreshing token", ex);
                     throw new CompletionException(ex);
                 });
-    }
+    }*/
+/*
+    public CompletionStage<AuthTokens> login() {
+//localhost:8080/realms/ai360-demo/protocol/openid-connect/auth?response_type=code&client_id=demoClientId&redirect_uri=http://localhost:8081/callback&scope=openid&state=123
+        //"code", securityConfig.getClientId(), securityConfig.getRedirectUri(), "openid", "123"
+        HttpRequest request = HttpRequest.GET(securityConfig.getAuthUrl() + "?response_type=code&client_id=" + securityConfig.getClientId() + "&redirect_uri=" + securityConfig.getRedirectUri() + "&scope=openid&state=123");
+        return defaultOauthController.login();
+
+       return HttpResponse.redirect(
+                URI.create("/oauth/login/keycloak")
+        );
+    }*/
 }

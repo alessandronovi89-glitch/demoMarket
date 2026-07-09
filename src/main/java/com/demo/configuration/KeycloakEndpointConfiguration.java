@@ -17,14 +17,14 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 public class KeycloakEndpointConfiguration implements ApplicationEventListener<StartupEvent> {
 
-    @Property(name = "keycloak.realm")
+    /*@Property(name = "keycloak.realm")
     private String realm;
 
     @Property(name = "keycloak.endpoints.users")
     private String usersUrl;
 
     @Property(name = "keycloak.endpoints.roles")
-    private String rolesUrl;
+    private String rolesUrl;*/
 
     @Property(name = "micronaut.security.oauth2.clients.keycloak.client-id")
     private String clientId;
@@ -36,7 +36,7 @@ public class KeycloakEndpointConfiguration implements ApplicationEventListener<S
     public void onApplicationEvent(final StartupEvent event) {
         log.atInfo().log("initial configuration: Keycloak Endpoint Configuration {}", this); //to be removed
     }
-
+/*
     @Override
     public String toString() {
         return "KeycloakEndpointConfiguration{" +
@@ -45,5 +45,5 @@ public class KeycloakEndpointConfiguration implements ApplicationEventListener<S
                 ", rolesUrl='" + rolesUrl + '\'' +
                 ", clientId='" + clientId + '\'' +
                 '}';
-    }
+    }*/
 }

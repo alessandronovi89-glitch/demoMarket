@@ -1,6 +1,5 @@
 package com.demo.configuration.roles;
 
-import io.micronaut.context.annotation.Replaces;
 import io.micronaut.security.token.DefaultRolesFinder;
 import io.micronaut.security.token.config.TokenConfiguration;
 import jakarta.inject.Named;
@@ -15,7 +14,7 @@ import static com.demo.configuration.roles.Providers.KEYCLOAK;
 
 @Slf4j
 @Singleton
-@Replaces(DefaultRolesFinder.class)
+//@Replaces(DefaultRolesFinder.class) -> per adesso ignoriamo!
 public class IdentityProviderRolesFinder extends DefaultRolesFinder {
 
 

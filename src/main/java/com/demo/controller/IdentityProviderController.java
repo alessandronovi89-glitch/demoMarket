@@ -1,25 +1,10 @@
 package com.demo.controller;
 
-import com.demo.dto.keycloak.EmailRequest;
-import com.demo.dto.keycloak.ResetPasswordRequest;
-import com.demo.dto.keycloak.User;
-import com.demo.dto.keycloak.UserSearchCriteria;
 import com.demo.service.IdentityProviderService;
-import io.micronaut.core.annotation.Nullable;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
-import io.micronaut.http.annotation.*;
-import io.micronaut.http.exceptions.HttpStatusException;
-import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.rules.SecurityRule;
+import io.micronaut.http.annotation.Controller;
 import io.micronaut.validation.Validated;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.net.URI;
-import java.util.List;
-import java.util.concurrent.CompletionStage;
 
 /**
  * Exposes a subset of Keycloak's Admin REST API (users + realm role mapping).
@@ -35,7 +20,7 @@ public class IdentityProviderController {
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final IdentityProviderService identityProviderService;
-
+/*
     @Secured(SecurityRule.IS_AUTHENTICATED) //da correggere.. con is Admin
     @Get("/users") //it's working..
     public CompletionStage<List<User>> getUsers(@Header("Authorization") String authorization,
@@ -104,5 +89,5 @@ public class IdentityProviderController {
         return authorizationHeader.startsWith(BEARER_PREFIX)
                 ? authorizationHeader.substring(BEARER_PREFIX.length())
                 : authorizationHeader;
-    }
+    }*/
 }

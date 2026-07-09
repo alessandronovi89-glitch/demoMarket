@@ -3,48 +3,32 @@ micronaut:
         idle-timeout: 60m
         read-idle-timeout: 60m
         write-idle-timeout: 60m
-        port: 8081
+        port: 8082
     http:
         client:
             read-timeout: 1m
 
     application:
         name: ia360-demo
+
     security:
         enabled: ${ENABLE_AUTH:true}
-        authentication: bearer
-        token:
-            jwt:
-                signatures:
-                    jwks:
-                        keycloak:
-                            url: http://localhost:8080/realms/ai360-demo/protocol/openid-connect/certs
+        authentication: idtoken
         oauth2:
             clients:
                 keycloak:
-                    grant-type: authorization_code
                     client-id: ${KEYCLOAK_CLIENT_ID:demoClientId}
                     client-secret: ${KEYCLOAK_CLIENT_SECRET:JlqrdWhPhhIj738sr2OwPDJJiN93pV7U}
-                    token:
-                        url: http://${keycloak.host}:${keycloak.port}/realms/${keycloak.realm}/protocol/openid-connect/token
+                    redirect-uri: http://localhost:8082/oauth/callback/keycloak
                     openid:
-                        issuer: http://${keycloak.host}:${keycloak.port}/realms/${keycloak.realm}
-                        jwks-uri: http://${keycloak.host}:${keycloak.port}/realms/${keycloak.realm}/protocol/openid-connect/certs
-
-
+                        issuer: http://localhost:8080/realms/ai360-demo
+        endpoints:
+            logout:
+                get-allowed: true
+        redirect:
+            login-success: /
+            login-failure: /loginFailed
 logger:
     levels:
         io.micronaut: TRACE
         com.demo: TRACE
-
-keycloak:
-    host: ${KEYCLOAK_HOST:localhost}
-    port: ${KEYCLOAK_PORT:8080}
-    realm: ${KEYCLOAK_REALM:ai360-demo}
-    redirect-uri: http://localhost:8081/callback #da sistemare con variabile...
-    endpoints:
-        base-url: http://${keycloak.host}:${keycloak.port}
-        admin-base-url: http://${keycloak.host}:${keycloak.port}/admin/realms/${keycloak.realm}
-        users: ${keycloak.endpoints.admin-base-url}/users
-        roles: ${keycloak.endpoints.admin-base-url}/roles
-

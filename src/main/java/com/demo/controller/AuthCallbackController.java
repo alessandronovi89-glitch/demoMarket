@@ -17,23 +17,29 @@ import java.util.concurrent.CompletionStage;
 @AllArgsConstructor
 @Validated
 public class AuthCallbackController {
-
+    //private final OauthClient client;
     private final AuthService authService;
     private static final String COOKIE_REFRESH_TOKEN = "refreshToken";
 
+    /*@Secured(SecurityRule.IS_ANONYMOUS) //da vedere..
+    @Get("/login")
+    public CompletionStage<AuthTokens> login() {
+        return authService.login();
+    }*/
 
     @Secured(SecurityRule.IS_ANONYMOUS) //da vedere..
     @Get("/callback")
     public CompletionStage<AuthTokens> callback(@NotBlank @QueryValue String code) {
+
         log.info("Received auth code: {}", code);
-        return authService.exchangeCodeForToken(code);
+        return null;//authService.exchangeCodeForToken(code);
         //il refreshtoken andrebbe nel cookie
     }
 
     @Secured(SecurityRule.IS_ANONYMOUS) //da vedere..
     @Post("/refreshToken")
     public CompletionStage<AuthTokens> refreshToken(@NotBlank @CookieValue(COOKIE_REFRESH_TOKEN) String refreshToken) {
-        return authService.refreshToken(refreshToken);
+        return null;//authService.refreshToken(refreshToken);
         // mettere il refresh token nel cookie
     }
 

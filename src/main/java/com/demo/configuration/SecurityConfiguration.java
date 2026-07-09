@@ -22,7 +22,7 @@ public class SecurityConfiguration implements ApplicationEventListener<StartupEv
 
     @Property(name = "micronaut.security.oauth2.clients.keycloak.client-secret")
     private String clientSecret;
-
+/*
     @Property(name = "keycloak.host")
     private String host;
 
@@ -30,22 +30,22 @@ public class SecurityConfiguration implements ApplicationEventListener<StartupEv
     private Integer port;
 
     @Property(name = "keycloak.realm")
-    private String realm;
+    private String realm;*/
 
-    @Property(name = "micronaut.security.oauth2.clients.keycloak.token.url")
-    private String tokenUrl;
+   // @Property(name = "micronaut.security.oauth2.clients.keycloak.token.url")
+  //  private String tokenUrl;
 
-    @Property(name = "micronaut.security.oauth2.clients.keycloak.grant-type")
-    private String grantType;
+  //  @Property(name = "micronaut.security.oauth2.clients.keycloak.grant-type")
+   // private String grantType;
 
-    @Property(name = "keycloak.redirect-uri")
-    private String redirectUri;
+  //  @Property(name = "keycloak.redirect-uri")
+  //  private String redirectUri;
 
     @Async
     public void onApplicationEvent(final StartupEvent event) {
         log.atInfo().log(" initial configuration: Security Configuration {}", this); //to be removed
     }
-
+/*
     @Override
     public String toString() {
         return "SecurityConfiguration{" +
@@ -58,5 +58,5 @@ public class SecurityConfiguration implements ApplicationEventListener<StartupEv
                 ", tokenUrl='" + tokenUrl + '\'' +
                 ", grantType='" + grantType + '\'' +
                 '}';
-    }
+    }*/
 }

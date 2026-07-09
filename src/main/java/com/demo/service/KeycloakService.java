@@ -1,24 +1,11 @@
 package com.demo.service;
 
 import com.demo.configuration.KeycloakEndpointConfiguration;
-import com.demo.dto.keycloak.*;
-import io.micronaut.core.type.Argument;
-import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.CompletionStage;
 
 /**
  * Calls Keycloak's Admin REST API (https://www.keycloak.org/docs-api/latest/rest-api/index.html).
@@ -34,7 +21,7 @@ public class KeycloakService implements IdentityProviderService {
 
     @Client()
     private final HttpClient httpClient;
-
+/*
     @Override
     public CompletionStage<List<User>> getUsers(String token, UserSearchCriteria criteria) {
         String url = endpointConfiguration.getUsersUrl() + buildQueryString(criteria);
@@ -190,5 +177,5 @@ public class KeycloakService implements IdentityProviderService {
             query.append('&');
         }
         query.append(name).append('=').append(URLEncoder.encode(String.valueOf(value), StandardCharsets.UTF_8));
-    }
+    }*/
 }

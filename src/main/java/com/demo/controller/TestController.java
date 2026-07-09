@@ -25,6 +25,12 @@ public class TestController {
         return HttpResponse.ok("{\"message\": \"Public endpoint OK\", \"ts\": \"" + Instant.now() + "\"}");
     }
 
+    @Get("/login")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<String> loginAuth() {
+        return HttpResponse.ok("{\"message\": \"Public endpoint OK\", \"ts\": \"" + Instant.now() + "\"}");
+    }
+
     /** Endpoint protetto — richiede un JWT valido. */
     @Get("/private")
     @Secured(SecurityRule.IS_AUTHENTICATED)
