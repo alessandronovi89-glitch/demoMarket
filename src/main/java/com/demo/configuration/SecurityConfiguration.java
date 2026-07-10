@@ -33,7 +33,10 @@ public class SecurityConfiguration implements ApplicationEventListener<StartupEv
     private String realm;
 
     @Property(name = "micronaut.security.oauth2.clients.keycloak.token.url")
-    private String tokenUrl;
+    private String tokenUrl; //non necessario..
+
+    @Property(name = "micronaut.security.oauth2.clients.keycloak.openid.issuer")
+    private String issuerUrl; //necessario..
 
     @Property(name = "micronaut.security.oauth2.clients.keycloak.grant-type")
     private String grantType;
