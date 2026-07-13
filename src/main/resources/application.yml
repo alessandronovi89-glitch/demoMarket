@@ -48,3 +48,5 @@ keycloak:
         users: ${keycloak.endpoints.admin-base-url}/users
         roles: ${keycloak.endpoints.admin-base-url}/roles
 
+oauth:
+    cookie-secure: ${COOKIE_SECURE:false}

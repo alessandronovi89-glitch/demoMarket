@@ -1,12 +1,18 @@
 package com.demo.configuration;
 
+import com.nimbusds.oauth2.sdk.GeneralException;
+import com.nimbusds.oauth2.sdk.id.Issuer;
+import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.event.ApplicationEventListener;
 import io.micronaut.context.event.StartupEvent;
 import io.micronaut.scheduling.annotation.Async;
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Singleton;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
 
 
 @Singleton
@@ -14,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 public class SecurityConfiguration implements ApplicationEventListener<StartupEvent> {
 
+    private OIDCProviderMetadata provider;
     @Property(name = "micronaut.security.enabled")
     private Boolean enabledSecurity;
 
@@ -32,17 +39,24 @@ public class SecurityConfiguration implements ApplicationEventListener<StartupEv
     @Property(name = "keycloak.realm")
     private String realm;
 
-    @Property(name = "micronaut.security.oauth2.clients.keycloak.token.url")
-    private String tokenUrl; //non necessario..
-
     @Property(name = "micronaut.security.oauth2.clients.keycloak.openid.issuer")
-    private String issuerUrl; //necessario..
+    private String issuerUrl;
 
     @Property(name = "micronaut.security.oauth2.clients.keycloak.grant-type")
     private String grantType;
 
     @Property(name = "keycloak.redirect-uri")
     private String redirectUri;
+
+    @Property(name = "oauth.cookie-secure")
+    private Boolean cookiesSecure; //da abilitare quando hai https
+
+    @PostConstruct
+    public void init() throws GeneralException, IOException {
+        if(enabledSecurity) {
+            provider = OIDCProviderMetadata.resolve(new Issuer(issuerUrl));
+        }
+    }
 
     @Async
     public void onApplicationEvent(final StartupEvent event) {
@@ -57,9 +71,9 @@ public class SecurityConfiguration implements ApplicationEventListener<StartupEv
                 ", port=" + port +
                 ", realm='" + realm + '\'' +
                 ", clientId='" + clientId + '\'' +
-                ", clientSecret='" + clientSecret + '\'' + //TO BE REMOVED..
-                ", tokenUrl='" + tokenUrl + '\'' +
                 ", grantType='" + grantType + '\'' +
+                ", redirectUri='" + redirectUri + '\'' +
+                ", cookiesSecure='" + cookiesSecure + '\'' +
                 '}';
     }
 }

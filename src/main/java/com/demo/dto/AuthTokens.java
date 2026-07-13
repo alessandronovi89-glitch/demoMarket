@@ -3,6 +3,7 @@ package com.demo.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.serde.annotation.Serdeable;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class AuthTokens {
 
     @JsonProperty("access_token")
